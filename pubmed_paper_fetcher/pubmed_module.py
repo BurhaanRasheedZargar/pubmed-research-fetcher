@@ -33,7 +33,10 @@ class PubMedAPI:
         }
         response = requests.get(self.DETAILS_URL, params=params)
         response.raise_for_status()
-        return response.json().get("result", {}).values()
+        data = response.json()
+        result = data.get("result", {})
+        # Filter out the metadata part, keeping only details for the PubMed IDs
+        return [result[uid] for uid in pubmed_ids if uid in result]
 
 
 def identify_non_academic_authors(authors: List[Dict[str, str]]) -> List[Dict[str, str]]:
